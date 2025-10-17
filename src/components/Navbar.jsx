@@ -1,15 +1,17 @@
 import { useEffect, useRef, useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef(null);   // wraps button and anchored dropdown
   const buttonRef = useRef(null);    // hamburger button
+  const navigate = useNavigate();
 
   // close when clicking outside wrapperRef
   useEffect(() => {
     function onDocClick(e) {
       if (!wrapperRef.current) return;
-      if (wrapperRef.current.contains(e.target)) return;x
+      if (wrapperRef.current.contains(e.target)) return;
       setOpen(false);
     }
     document.addEventListener("click", onDocClick);
@@ -17,6 +19,21 @@ export default function Navbar() {
   }, []);
 
   const navHeightClass = "h-16";
+  const menuItems = [
+    { label: "Home", to: "/", type: "link" },
+    { label: "Users", to: "/users", type: "link" },
+    { label: "Register", to: "/register", type: "link" },
+    { label: "Login", to: "/login", type: "link" },
+    { label: "Logout", type: "action" },
+  ];
+
+  function handleLogout() {
+    try {
+      localStorage.removeItem("token");
+    } catch {}
+    navigate("/login", { replace: true });
+    setOpen(false);
+  }
 
   return (
     <>
@@ -31,12 +48,25 @@ export default function Navbar() {
 
             {/* Desktop menu items */}
             <ul className="hidden md:flex items-center space-x-3 text-blue-900 font-medium">
-              {["Home", "About", "Services", "Contact"].map((it) => (
-                <li
-                  key={it}
-                  className={`px-3 py-2 rounded-md cursor-pointer transition-colors duration-150`}
-                >
-                  {it}
+              {menuItems.map((item) => (
+                <li key={item.label}>
+                  {item.type === "link" ? (
+                    <NavLink
+                      to={item.to}
+                      className={({ isActive }) =>
+                        `px-3 py-2 rounded-md transition-colors duration-150 ${isActive ? "bg-blue-100" : "hover:bg-blue-50"}`
+                      }
+                    >
+                      {item.label}
+                    </NavLink>
+                  ) : (
+                    <button
+                      onClick={handleLogout}
+                      className="px-3 py-2 rounded-md transition-colors duration-150 hover:bg-blue-50"
+                    >
+                      {item.label}
+                    </button>
+                  )}
                 </li>
               ))}
             </ul>
@@ -67,13 +97,26 @@ export default function Navbar() {
                 style={{ transformOrigin: "top right", top: "100%" }}
               >
                 <ul className="flex flex-col p-2 gap-1">
-                  {["Home", "About", "Services", "Contact"].map((it) => (
-                    <li
-                      key={it}
-                      onClick={() => setOpen(false)}
-                      className="py-2 px-3 rounded-md hover:bg-blue-50 cursor-pointer text-blue-900"
-                    >
-                      {it}
+                  {menuItems.map((item) => (
+                    <li key={item.label} className="py-1">
+                      {item.type === "link" ? (
+                        <NavLink
+                          to={item.to}
+                          onClick={() => setOpen(false)}
+                          className={({ isActive }) =>
+                            `block w-full py-2 px-3 rounded-md text-blue-900 ${isActive ? "bg-blue-100" : "hover:bg-blue-50"}`
+                          }
+                        >
+                          {item.label}
+                        </NavLink>
+                      ) : (
+                        <button
+                          onClick={handleLogout}
+                          className="w-full text-left py-2 px-3 rounded-md text-blue-900 hover:bg-blue-50"
+                        >
+                          {item.label}
+                        </button>
+                      )}
                     </li>
                   ))}
                 </ul>
