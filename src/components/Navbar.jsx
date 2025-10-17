@@ -46,7 +46,7 @@ export default function Navbar() {
           <div className="flex items-center justify-between h-full">
             <div className="text-2xl font-bold text-blue-800 select-none">Logo</div>
 
-            {/* Desktop menu items */}
+            {/* Web menu items */}
             <ul className="hidden md:flex items-center space-x-3 text-blue-900 font-medium">
               {menuItems.map((item) => (
                 <li key={item.label}>
